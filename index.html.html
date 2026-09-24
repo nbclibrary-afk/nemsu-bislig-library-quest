@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="NEMSU Bislig Campus Library Quest">
+<title>NEMSU Bislig Campus Library - Library Quest</title>
+<style>
+:root{--navy:#12355b;--gold:#d9a441;--bg:#f4f6f8;--card:#fff;--text:#17212b;--muted:#65717d;--ok:#24734d;--bad:#a33a3a}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+main{max-width:760px;margin:auto;padding:18px 14px 42px}.brand{text-align:center;padding:8px 0 16px}
+.logo{width:74px;height:74px;border-radius:50%;margin:auto;display:flex;align-items:center;justify-content:center;background:var(--navy);color:white;font-size:36px;border:5px solid var(--gold)}
+.brand small{display:block;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-top:10px}.brand h1{margin:5px 0;color:var(--navy);font-size:clamp(27px,7vw,40px)}.brand p{margin:0;color:var(--muted)}
+.panel{background:var(--card);border:1px solid #dce3e9;border-radius:18px;padding:20px;margin-top:14px}
+label{display:block;font-weight:700;margin-bottom:7px}.field{width:100%;padding:13px 14px;border:1px solid #cbd5dd;border-radius:11px;font-size:16px}.field:focus{outline:3px solid #dbe8f4;border-color:var(--navy)}
+.primary,.secondary{border:0;border-radius:11px;padding:13px 16px;font-size:16px;font-weight:700;cursor:pointer}.primary{background:var(--navy);color:#fff;width:100%;margin-top:12px}.secondary{background:#fff;color:var(--navy);border:1px solid #cbd5dd;width:100%;margin-top:10px}
+.hidden{display:none!important}.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}.stat{text-align:center;background:var(--card);border:1px solid #dce3e9;border-radius:14px;padding:12px}.stat span{display:block;color:var(--muted);font-size:11px;font-weight:800}.stat strong{font-size:23px}
+.category{font-size:12px;font-weight:800;color:var(--navy);letter-spacing:.7px}.question{font-size:21px;font-weight:700;line-height:1.4;margin:8px 0 19px}.choices{display:grid;gap:10px}.choice{min-height:50px;border:1px solid #cbd5dd;border-radius:12px;background:#fff;padding:12px 14px;text-align:left;font-size:16px;cursor:pointer}.choice:hover{border-color:var(--navy);background:#f5f8fb}.choice:disabled{cursor:default}.feedback{min-height:42px;padding-top:13px;font-weight:700;line-height:1.4}
+.result{text-align:center;border:2px solid var(--gold);padding:25px}.result h2{color:var(--navy);margin:4px 0}.result .score{font-size:50px;font-weight:800;color:var(--navy);margin:8px 0}.badge{font-size:42px;margin-bottom:4px}.sharebox{background:#f6f8fa;border-radius:12px;padding:13px;text-align:left;font-size:14px;line-height:1.5;white-space:pre-wrap}
+.note{text-align:center;color:var(--muted);font-size:12px;margin-top:14px;line-height:1.5}
+@media(max-width:420px){main{padding:14px 11px 35px}.panel{padding:17px}.question{font-size:19px}}
+</style>
+</head>
+<body>
+<main>
+<section class="brand">
+  <div class="logo" aria-label="Library icon">📚</div>
+  <small>NORTH EASTERN MINDANAO STATE UNIVERSITY</small>
+  <h1>Bislig Campus Library</h1>
+  <p>Library Quest • Read. Discover. Learn.</p>
+</section>
+
+<section id="startPanel" class="panel">
+  <h2 style="margin-top:0;color:var(--navy)">📚 Are you ready?</h2>
+  <p>Enter your name and test your library knowledge in 8 quick questions.</p>
+  <label for="studentName">Name</label>
+  <input id="studentName" class="field" maxlength="80" placeholder="Enter your name">
+  <button id="start" class="primary" type="button">Start Library Quest</button>
+</section>
+
+<section id="gameArea" class="hidden">
+  <div class="stats">
+    <div class="stat"><span>QUESTION</span><strong id="qnum">1 / 8</strong></div>
+    <div class="stat"><span>SCORE</span><strong id="score">0</strong></div>
+  </div>
+  <section class="panel">
+    <div id="category" class="category"></div>
+    <div id="question" class="question"></div>
+    <div id="choices" class="choices"></div>
+    <div id="feedback" class="feedback" aria-live="polite"></div>
+  </section>
+</section>
+
+<section id="resultArea" class="panel result hidden">
+  <div class="badge" id="badge">🏆</div>
+  <div style="font-size:12px;font-weight:800;color:var(--muted)">LIBRARY QUEST COMPLETED</div>
+  <h2 id="resultName"></h2>
+  <div class="score" id="finalScore"></div>
+  <p id="resultMessage"></p>
+  <div class="sharebox" id="shareText"></div>
+  <button id="copyShare" class="primary" type="button">Copy Score for Facebook</button>
+  <button id="again" class="secondary" type="button">Play Again</button>
+  <p class="note">Share your score on the NEMSU Bislig Campus Library Facebook page and challenge your classmates.</p>
+</section>
+
+<p class="note">NEMSU Bislig Campus Library<br>For educational and student-engagement purposes.</p>
+</main>
+
+<script>
+const questions=[
+{c:"LIBRARY BASICS",q:"What is the main purpose of a library catalogue or OPAC?",a:["To find and locate library resources","To replace all library staff","To play online games","To record student grades"],x:0},
+{c:"SEARCH SKILLS",q:"Which information is most useful when searching for a specific book?",a:["Title or author","Student ID only","Class schedule","Favourite colour"],x:0},
+{c:"LIBRARY ETIQUETTE",q:"What should you normally do inside a library?",a:["Maintain a reasonable level of quiet","Play music loudly","Leave books anywhere","Eat beside library computers"],x:0},
+{c:"BOOKS",q:"What does a call number help you identify?",a:["Where a book is located on the shelf","The price of the book","The student who bought it","The number of pages only"],x:0},
+{c:"RESEARCH",q:"Which is generally a stronger starting point for academic research?",a:["A scholarly source or authoritative reference","An anonymous social-media comment","An unverified meme","A random advertisement"],x:0},
+{c:"DIGITAL LIBRARY",q:"What is one advantage of an online library resource?",a:["It can provide access to information beyond the physical shelves","It eliminates the need to evaluate sources","It guarantees every website is reliable","It removes copyright restrictions"],x:0},
+{c:"RESPONSIBLE USE",q:"When using information from another author, what should you do?",a:["Give proper acknowledgement or citation","Present it as your own","Delete the author's name","Change a few words and claim ownership"],x:0},
+{c:"LIBRARY CHALLENGE",q:"You cannot find a book you need. What is the best next step?",a:["Ask library staff for assistance","Give up immediately","Take another book without checking","Remove books from the shelves"],x:0}
+];
+
+let i=0,score=0,locked=false,name="";
+const $=id=>document.getElementById(id);
+
+$("start").addEventListener("click",()=>{
+ name=$("studentName").value.trim();
+ if(!name){$("studentName").focus();return}
+ i=0;score=0;$("startPanel").classList.add("hidden");$("resultArea").classList.add("hidden");$("gameArea").classList.remove("hidden");render();
+});
+
+function render(){
+ locked=false;$("qnum").textContent=`${i+1} / ${questions.length}`;$("score").textContent=score;
+ $("category").textContent=questions[i].c;$("question").textContent=questions[i].q;$("feedback").textContent="";
+ const box=$("choices");box.innerHTML="";
+ questions[i].a.forEach((t,n)=>{const b=document.createElement("button");b.type="button";b.className="choice";b.textContent=t;b.addEventListener("click",()=>answer(n));box.appendChild(b)});
+}
+function answer(n){
+ if(locked)return;locked=true;const correct=n===questions[i].x;
+ $("feedback").style.color=correct?"var(--ok)":"var(--bad)";
+ $("feedback").textContent=correct?"✓ Correct! +10 points.":"Not quite. Correct answer: "+questions[i].a[questions[i].x];
+ if(correct)score+=10;$("score").textContent=score;[...$("choices").children].forEach(b=>b.disabled=true);
+ setTimeout(()=>{i++;i<questions.length?render():finish()},850);
+}
+function finish(){
+ $("gameArea").classList.add("hidden");$("resultArea").classList.remove("hidden");
+ $("resultName").textContent=name;$("finalScore").textContent=`${score} / 80`;
+ const champion=score===80,excellent=score>=60;
+ $("badge").textContent=champion?"🏆":excellent?"🌟":"📚";
+ $("resultMessage").textContent=champion?"Library Champion! Perfect score.":excellent?"Excellent library skills!":"Good effort! Play again and improve your score.";
+ const text=`📚 LIBRARY QUEST\n\n${name} scored ${score}/80 in the NEMSU Bislig Campus Library Quest!\n\nCan you beat my score?`;
+ $("shareText").textContent=text;
+}
+$("copyShare").addEventListener("click",async()=>{
+ const text=$("shareText").textContent;
+ try{await navigator.clipboard.writeText(text);$("copyShare").textContent="✓ Copied! Paste it on Facebook."}
+ catch(e){$("copyShare").textContent="Select and copy the score text above."}
+});
+$("again").addEventListener("click",()=>{i=0;score=0;$("resultArea").classList.add("hidden");$("startPanel").classList.remove("hidden");$("studentName").focus();});
+</script>
+</body>
+</html>
